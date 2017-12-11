@@ -1,0 +1,67 @@
+group 'net.evecom'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+description = """"""
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+    maven { //第三方jar包
+        url "${nexusUrl}/content/repositories/thirdparty"
+    }
+    maven{ // 这个私服仓库使用jcenter 远程库
+        url "${nexusUrl}/content/repositories/jcenter"
+    }
+    mavenCentral()
+    jcenter()
+    /*maven {
+        url "${nexusUrl}/content/repositories/central"
+    }*/
+    /*maven { url "http://repo.maven.apache.org/maven2" }*/
+}
+dependencies {
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version:'1.9.2'
+    compile group: 'commons-collections', name: 'commons-collections', version:'3.2.1'
+    compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
+    compile group: 'org.apache.poi', name: 'poi', version:'3.14'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version:'3.14'
+    compile group: 'org.apache.poi', name: 'poi-ooxml-schemas', version:'3.14'
+    compile group: 'org.apache.xmlbeans', name: 'xmlbeans', version:'2.6.0'
+    compile group: 'org.springframework', name: 'spring-core', version:'4.2.6.RELEASE'
+    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.6.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.6.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.6.RELEASE'
+    compile group: 'log4j', name: 'log4j', version:'1.2.17'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    /* compile group: 'net.evecom.core', name: 'base', version: '1.0.0.66'*/
+    compile(group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0') {
+        /* This dependency was originally in the Maven provided scope, but the project was not of type war.
+        This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
+        Please review and delete this closure when resolved. */
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "http://192.168.6.246:8081/nexus/content/repositories/thirdparty") {
+                    authentication(userName: "admin", password: "admin123")
+                }
+                pom.version = "$project.version"
+                pom.artifactId = "easy-excel"
+                pom.groupId = "$project.group"
+            }
+            flatDir {
+                dirs 'repos'
+            }
+        }
+    }
+}
